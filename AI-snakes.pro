@@ -20,7 +20,8 @@ HEADERS += \
     classes/snake/snake_directions.h \
     classes/snake/strategies/abstract_strategy.h \
     classes/snake/strategies/ai_strategy.h \
-    classes/snake/strategies/manual_strategy.h
+    classes/snake/strategies/manual_strategy.h \
+    classes/snake/strategies/strategy_type.h
 
 DEFINES += enable-sjlj-exceptions fexceptions DSFML_DYNAMIC
 

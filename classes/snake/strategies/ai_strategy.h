@@ -2,13 +2,32 @@
 #define AI_STRATEGY_H
 
 #include <classes/snake/strategies/abstract_strategy.h>
+#include <SFML/System/Vector2.hpp>
+#include <map>
+#include <list>
+#include <vector>
+#include <random>
 
-class AiStrategy: protected AbstractStrategy
+class AiStrategy: public AbstractStrategy
 {
 public:
+    AiStrategy();
+    void clearMap();
+    void mapSnake(sf::Vector2i position, std::list<sf::Vector2i> elements);
+    void mapThisSnake(sf::Vector2i position, std::list<sf::Vector2i> elements);
+    void mapWall(std::vector<sf::Vector2i> elements);
+    void mapFruits(std::vector<sf::Vector2i> elements);
+    void setPosition(sf::Vector2i position);
 
+    SnakeDirection exec() override;
+    StrategyType getType() override;
 private:
+    int viewSize = 11;
+    int viewRadius = 5;
+    std::map<int, std::map<int, char>> view;
+    std::map<char, std::map<int, std::map<int, std::map<SnakeDirection, float>>>> sensitivity;
 
+    sf::Vector2i position;
 };
 
 #endif

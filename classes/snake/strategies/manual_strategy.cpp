@@ -8,3 +8,8 @@ SnakeDirection ManualStrategy::exec()
     this->lastDirection = this->currentDirection;
     return this->lastDirection;
 }
+
+StrategyType ManualStrategy::getType()
+{
+    return StrategyType::MANUAL;
+}

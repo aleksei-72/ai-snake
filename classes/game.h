@@ -5,6 +5,7 @@
 #include <classes/map.h>
 #include <vector>
 #include <classes/render_manager.h>
+#include <classes/snake/strategies/ai_strategy.h>
 
 class Game
 {

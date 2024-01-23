@@ -8,6 +8,7 @@ class ManualStrategy: public AbstractStrategy
 public:
     static SnakeDirection currentDirection;
     SnakeDirection exec() override;
+    StrategyType getType() override;
 private:
     SnakeDirection lastDirection = SnakeDirection::UP;
 };

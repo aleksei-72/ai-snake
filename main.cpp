@@ -4,33 +4,35 @@
 #include <classes/snake/strategies/ai_strategy.h>
 #include <classes/snake/strategies/manual_strategy.h>
 #include <classes/map.h>
+#include <ctime>
 
 using namespace std;
 
 int main()
 {
+    srand(time(0));
     Game game;
 
-    Map map(20, 15);
+    Map map(80, 60);
     map.generateRandom();
 
     game.setMap(&map);
 
-    ManualStrategy *manualStrategy = new ManualStrategy();
-    //AiStrategy *aiStrategy = new AiStrategy();
+    //ManualStrategy *manualStrategy = new ManualStrategy();
 
-    Snake snake1(manualStrategy);
-    snake1.setPosition(sf::Vector2i(11, 12));
-    game.addSnake(snake1);
+    for (int i: {0, /*1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14*/})
+    {
+        AiStrategy *aiStrategy = new AiStrategy();
+        Snake snake1(aiStrategy);
+        snake1.setPosition(sf::Vector2i(30 + i*5, 30));
+        game.addSnake(snake1);
+    }
 
-    Snake snake2(manualStrategy);
-    snake2.setPosition(sf::Vector2i(9, 12));
-    //game.addSnake(snake2);
 
 
     RenderManager render;
 
-    unsigned int frameRate = 4;
+    unsigned int frameRate = 144;
     render.setFrameRate(&frameRate);
 
     render.init();

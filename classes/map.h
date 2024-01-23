@@ -9,19 +9,19 @@ class Map
 {
 public:
     Map(int width, int height);
-    void updateFruitPosition();
     void generateRandom();
-    void generateFruit();
+    void generateFruit(unsigned idx);
 
     sf::Vector2u getMapSize();
     std::vector<sf::Vector2i> getBlocks();
-    sf::Vector2i getFruit();
+    std::vector<sf::Vector2i> getFruits();
 private:
     std::vector<sf::Vector2i> blocks;
     int width, height;
-    sf::Vector2i fruit;
+    std::vector<sf::Vector2i> fruits;
 
-    float filling = 0.04;
+    float filling = 0.005;
+    int fruitsCount = 900;
 };
 
 #endif

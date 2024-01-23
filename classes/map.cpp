@@ -6,19 +6,24 @@ Map::Map(int width, int height)
     this->height = height;
 }
 
-void Map::updateFruitPosition()
+std::vector<sf::Vector2i> Map::getFruits()
 {
-    this->fruit = sf::Vector2i(rand()/this->width, rand()/this->height);
+    return this->fruits;
 }
 
-sf::Vector2i Map::getFruit()
+void Map::generateFruit(unsigned int idx)
 {
-    return this->fruit;
-}
+    sf::Vector2i newPos(rand()%this->width, rand()%this->height);
+    for (sf::Vector2i item: this->blocks)
+    {
+        if (item.x == newPos.x && item.y == newPos.y)
+        {
+            this->generateFruit(idx);
+            return;
+        }
+    }
 
-void Map::generateFruit()
-{
-    this->fruit = sf::Vector2i(rand()%this->width, rand()%this->height);
+    this->fruits.at(idx) = newPos;
 }
 
 void Map::generateRandom()
@@ -33,7 +38,11 @@ void Map::generateRandom()
         this->blocks.push_back(v);
     }
 
-    this->fruit = sf::Vector2i(rand()%this->width, rand()%this->height);
+    for(int i = 0; i < this->fruitsCount; i++)
+    {
+        this->fruits.push_back(sf::Vector2i(0, 0));
+        this->generateFruit(i);
+    }
 }
 
 sf::Vector2u Map::getMapSize()

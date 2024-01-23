@@ -2,6 +2,8 @@
 #define SNAKE_H
 
 #include <classes/snake/strategies/abstract_strategy.h>
+#include <classes/snake/strategies/ai_strategy.h>
+#include <classes/snake/strategies/manual_strategy.h>
 #include <SFML/Graphics.hpp>
 #include <list>
 
@@ -16,6 +18,7 @@ public:
     std::list<sf::Vector2i> getElements();
     sf::Vector2i getHead();
     Snake(AbstractStrategy *newStrategy);
+    Snake(StrategyType type);
 
     SnakeDirection exec();
     void applyMove(SnakeDirection direction);
@@ -23,6 +26,10 @@ public:
 
     void kill();
     bool getIsLive();
+    bool canReproduction();
+    Snake reproduction();
+
+    AbstractStrategy *getStrategy();
 private:
     unsigned int id;
     AbstractStrategy *strategy;

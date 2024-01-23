@@ -3,7 +3,7 @@
 void RenderManager::init()
 {
     this->window = new sf::RenderWindow(
-        sf::VideoMode(640, 480),
+        sf::VideoMode(800, 600),
         "Hello World"
     );
     if (this->frameRate) {

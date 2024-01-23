@@ -49,6 +49,51 @@ void Game::updateSnake(std::vector<Snake>::iterator snake)
 {
     sf::Vector2u mapSize = this->map->getMapSize();
 
+    if (snake->getStrategy()->getType() == StrategyType::AI)
+    {
+        AiStrategy *strategy = static_cast<AiStrategy*>(snake->getStrategy());
+
+        strategy->setPosition(
+            sf::Vector2i(
+                snake->getPosition().x + snake->getHead().x,
+                snake->getPosition().y + snake->getHead().y
+            )
+        );
+
+        std::vector<sf::Vector2i> end;
+
+        for (int x = -1; x <= (int)this->map->getMapSize().x; x++)
+        {
+            end.push_back(sf::Vector2i(x, -1));
+            end.push_back(sf::Vector2i(x, this->map->getMapSize().y));
+
+            if (x == -1 || x == (int)this->map->getMapSize().x)
+            {
+                for (int y = -1; y <= (int)this->map->getMapSize().y; y++)
+                {
+                    end.push_back(sf::Vector2i(x, y));
+                }
+            }
+        }
+
+        strategy->clearMap();
+        strategy->mapFruits(this->map->getFruits());
+
+        strategy->mapWall(end);
+        strategy->mapWall(this->map->getBlocks());
+
+        for(Snake s: this->snakes)
+        {
+            if (!snake->getIsLive())
+                continue;
+
+            if (snake->getId() == snake->getId())
+                strategy->mapThisSnake(snake->getPosition(), snake->getElements());
+            else
+                strategy->mapSnake(snake->getPosition(), snake->getElements());
+        }
+    }
+
     SnakeDirection direction = snake->exec();
     snake->applyMove(direction);
 
@@ -63,13 +108,19 @@ void Game::updateSnake(std::vector<Snake>::iterator snake)
         return;
     }
 
-    if (
-        this->map->getFruit().x == snake->getHead().x + snake->getPosition().x &&
-        this->map->getFruit().y == snake->getHead().y + snake->getPosition().y
-    )
+    unsigned int fruitIdx = 0;
+    for (sf::Vector2i fruitPos: this->map->getFruits())
     {
-       snake->applyFruit();
-       this->map->generateFruit();
+        if (
+            fruitPos.x == snake->getHead().x + snake->getPosition().x &&
+            fruitPos.y == snake->getHead().y + snake->getPosition().y
+        )
+        {
+           snake->applyFruit();
+           this->map->generateFruit(fruitIdx);
+        }
+
+        fruitIdx ++;
     }
 
     for (sf::Vector2i item: this->map->getBlocks())
@@ -131,14 +182,28 @@ void Game::updateSnake(std::vector<Snake>::iterator snake)
 
 void Game::exec(sf::Int64 t)
 {
+    unsigned int liveSnakes = 0;
+    std::vector<Snake> inserts;
     for (std::vector<Snake>::iterator snakeIt = this->snakes.begin(); snakeIt != this->snakes.end(); ++snakeIt)
     {
         if (!snakeIt->getIsLive()) {
             continue;
         }
 
+        liveSnakes ++;
+        if (snakeIt->canReproduction())
+        {
+            inserts.push_back(snakeIt->reproduction());
+        }
+
         this->updateSnake(snakeIt);
+
     }
+
+    std::cout << "snakes: " << liveSnakes << '\n';
+
+    for(Snake s: inserts)
+        this->snakes.push_back(s);
 
 }
 
@@ -202,15 +267,19 @@ void Game::draw()
     // render fruit
     for (int i: {0, 1, 2, 3})
         renderUnit[i].color = sf::Color(76, 255, 0);
-    {
-        sf::VertexArray renderItem = renderUnit;
-        for (int i: {0, 1, 2, 3})
-        {
-            renderItem[i].position.x += this->map->getFruit().x * unit.x;
-            renderItem[i].position.y += this->map->getFruit().y * unit.y;
-        }
 
-        this->render->draw(renderItem);
+    for (sf::Vector2i fruitPos: this->map->getFruits())
+    {
+        {
+            sf::VertexArray renderItem = renderUnit;
+            for (int i: {0, 1, 2, 3})
+            {
+                renderItem[i].position.x += fruitPos.x * unit.x;
+                renderItem[i].position.y += fruitPos.y * unit.y;
+            }
+
+            this->render->draw(renderItem);
+        }
     }
 
 }
