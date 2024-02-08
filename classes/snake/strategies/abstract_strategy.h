@@ -9,6 +9,7 @@ class AbstractStrategy
 public:
     virtual SnakeDirection exec() = 0;
     virtual StrategyType getType() = 0;
+    virtual AbstractStrategy *clone() = 0;
 private:
 
 };

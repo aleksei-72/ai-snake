@@ -1,9 +1,14 @@
 #include <classes/render_manager.h>
 
+RenderManager::RenderManager(sf::Vector2i wSize)
+{
+    this->windowSize = wSize;
+}
+
 void RenderManager::init()
 {
     this->window = new sf::RenderWindow(
-        sf::VideoMode(800, 600),
+        sf::VideoMode(this->windowSize.x, this->windowSize.y),
         "Hello World"
     );
     if (this->frameRate) {

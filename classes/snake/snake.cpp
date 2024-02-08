@@ -1,37 +1,32 @@
 #include <classes/snake/snake.h>
+#include <iostream>
 
 unsigned int Snake::nextSnakeId = 0;
 
 Snake::Snake(AbstractStrategy *newStrategy)
 {
-    this->strategy = newStrategy;
+    this->strategy = newStrategy->clone();
 
     this->elements.push_back(sf::Vector2i(0, 0));
     this->elements.push_back(sf::Vector2i(0, 1));
     this->elements.push_back(sf::Vector2i(0, 2));
-        /*this->elements.push_back(sf::Vector2i(0, 3));
-        this->elements.push_back(sf::Vector2i(0, 4));
-        this->elements.push_back(sf::Vector2i(0, 5));
-            this->elements.push_back(sf::Vector2i(0, 6));
-            this->elements.push_back(sf::Vector2i(0, 7));
-            this->elements.push_back(sf::Vector2i(0, 8));
-            this->elements.push_back(sf::Vector2i(0, 9));
-            this->elements.push_back(sf::Vector2i(0, 10));
-            this->elements.push_back(sf::Vector2i(0, 11));
-            this->elements.push_back(sf::Vector2i(0, 12));*/
+    this->elements.push_back(sf::Vector2i(0, 3));
 
 
     this->id = this->nextSnakeId;
     this->nextSnakeId ++;
-}
 
-Snake::Snake(StrategyType type)
-{
-    if (type == StrategyType::AI)
-        this->strategy = new AiStrategy();
+    const unsigned int colorsCount = 4;
 
-    if (type == StrategyType::MANUAL)
-        this->strategy = new ManualStrategy();
+    sf::Color colors[colorsCount] =
+    {
+        sf::Color(79, 56, 255),
+        sf::Color(255, 66, 239),
+        sf::Color(255, 114, 71),
+        sf::Color(243, 255, 86)
+    };
+
+    this->color = colors[rand() % colorsCount];
 }
 
 unsigned int Snake::getId()
@@ -78,6 +73,7 @@ void Snake::applyMove(SnakeDirection direction)
     }
     else
     {
+        this->hunger = 0;
         this->isFruit = false;
     }
 
@@ -87,7 +83,24 @@ void Snake::applyMove(SnakeDirection direction)
 
 SnakeDirection Snake::exec()
 {
+    this->hunger ++;
+
+    if (this->hunger >= this->maxHunger)
+    {
+        this->hunger = 0;
+        this->elements.pop_back();
+    }
+
+    if (this->elements.size() < 4)
+        this->kill();
+
+
     return this->strategy->exec();
+}
+
+sf::Color Snake::getColor()
+{
+    return this->color;
 }
 
 void Snake::kill()
@@ -112,17 +125,18 @@ AbstractStrategy *Snake::getStrategy()
 
 bool Snake::canReproduction()
 {
-    return this->elements.size() > 16;
+    return this->elements.size() > 20;
 }
 
 Snake Snake::reproduction()
 {
 
-    Snake s(this->strategy->getType());
+    Snake s(this->strategy);
+
     s.elements.clear();
     s.setPosition(this->position);
 
-    for (int idx = 0; idx < 6; idx++)
+    for (int idx = 0; idx < 10; idx++)
     {
         s.elements.push_back(this->elements.back());
         this->elements.pop_back();

@@ -10,6 +10,7 @@
 class RenderManager
 {
 public:
+    RenderManager(sf::Vector2i wSize);
     void init();
     void setFrameRate(unsigned int *frameRate);
     void startDraw();
@@ -18,6 +19,7 @@ public:
     void draw(const sf::Drawable& drawable);
     sf::Vector2u getWindowSize();
 private:
+    sf::Vector2i windowSize;
     sf::RenderWindow *window;
     unsigned int *frameRate = nullptr;
 };

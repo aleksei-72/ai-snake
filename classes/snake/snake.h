@@ -18,7 +18,7 @@ public:
     std::list<sf::Vector2i> getElements();
     sf::Vector2i getHead();
     Snake(AbstractStrategy *newStrategy);
-    Snake(StrategyType type);
+    sf::Color getColor();
 
     SnakeDirection exec();
     void applyMove(SnakeDirection direction);
@@ -31,12 +31,15 @@ public:
 
     AbstractStrategy *getStrategy();
 private:
+    unsigned int maxHunger = 60;
+    unsigned int hunger = 0;
     unsigned int id;
     AbstractStrategy *strategy;
     std::list<sf::Vector2i> elements;
     sf::Vector2i position;
     bool isLive = true;
     bool isFruit = false;
+    sf::Color color;
 };
 
 #endif

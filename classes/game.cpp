@@ -60,26 +60,12 @@ void Game::updateSnake(std::vector<Snake>::iterator snake)
             )
         );
 
-        std::vector<sf::Vector2i> end;
 
-        for (int x = -1; x <= (int)this->map->getMapSize().x; x++)
-        {
-            end.push_back(sf::Vector2i(x, -1));
-            end.push_back(sf::Vector2i(x, this->map->getMapSize().y));
-
-            if (x == -1 || x == (int)this->map->getMapSize().x)
-            {
-                for (int y = -1; y <= (int)this->map->getMapSize().y; y++)
-                {
-                    end.push_back(sf::Vector2i(x, y));
-                }
-            }
-        }
 
         strategy->clearMap();
         strategy->mapFruits(this->map->getFruits());
 
-        strategy->mapWall(end);
+        strategy->mapWall(this->map->getBorderBlocks());
         strategy->mapWall(this->map->getBlocks());
 
         for(Snake s: this->snakes)
@@ -168,8 +154,7 @@ void Game::updateSnake(std::vector<Snake>::iterator snake)
 
                     if (snakeItElementIdx == 1)
                         snake->kill();
-
-                    if (snakeElementIdx == 1)
+                    else if (snakeElementIdx == 1)
                         snakeIt->kill();
 
                     continue;
@@ -182,7 +167,7 @@ void Game::updateSnake(std::vector<Snake>::iterator snake)
 
 void Game::exec(sf::Int64 t)
 {
-    unsigned int liveSnakes = 0;
+    int liveSnakes = 0;
     std::vector<Snake> inserts;
     for (std::vector<Snake>::iterator snakeIt = this->snakes.begin(); snakeIt != this->snakes.end(); ++snakeIt)
     {
@@ -200,7 +185,12 @@ void Game::exec(sf::Int64 t)
 
     }
 
-    std::cout << "snakes: " << liveSnakes << '\n';
+    if (this->snakesCount != liveSnakes)
+    {
+        std::cout << "snakes: " << liveSnakes << '\n';
+        this->snakesCount = liveSnakes;
+    }
+
 
     for(Snake s: inserts)
         this->snakes.push_back(s);
@@ -243,13 +233,15 @@ void Game::draw()
     }
 
     // render snakes
-    for (int i: {0, 1, 2, 3})
-        renderUnit[i].color = sf::Color(0, 38, 255);
+
 
     for (Snake snake: this->snakes)
     {
         if (!snake.getIsLive())
             continue;
+
+        for (int i: {0, 1, 2, 3})
+            renderUnit[i].color = snake.getColor();
 
         for (sf::Vector2i item: snake.getElements())
         {

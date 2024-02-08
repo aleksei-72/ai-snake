@@ -18,12 +18,14 @@ public:
     void mapWall(std::vector<sf::Vector2i> elements);
     void mapFruits(std::vector<sf::Vector2i> elements);
     void setPosition(sf::Vector2i position);
-
+    void initSensivity();
+    void mutate();
     SnakeDirection exec() override;
     StrategyType getType() override;
+    AbstractStrategy *clone() override;
 private:
-    int viewSize = 11;
-    int viewRadius = 5;
+    int generation = 0;
+    int viewRadius = 15;
     std::map<int, std::map<int, char>> view;
     std::map<char, std::map<int, std::map<int, std::map<SnakeDirection, float>>>> sensitivity;
 

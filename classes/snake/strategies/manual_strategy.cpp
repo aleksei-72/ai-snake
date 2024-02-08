@@ -3,6 +3,13 @@
 SnakeDirection ManualStrategy::currentDirection = SnakeDirection::UP;
 
 
+AbstractStrategy *ManualStrategy::clone()
+{
+    ManualStrategy *a = new ManualStrategy();
+
+    return a;
+}
+
 SnakeDirection ManualStrategy::exec()
 {
     this->lastDirection = this->currentDirection;

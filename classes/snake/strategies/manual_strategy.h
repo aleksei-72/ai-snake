@@ -9,6 +9,7 @@ public:
     static SnakeDirection currentDirection;
     SnakeDirection exec() override;
     StrategyType getType() override;
+    AbstractStrategy *clone() override;
 private:
     SnakeDirection lastDirection = SnakeDirection::UP;
 };

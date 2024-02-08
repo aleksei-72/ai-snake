@@ -24,6 +24,7 @@ private:
     void draw();
     std::vector<Snake> snakes;
 
+    int snakesCount = 0;
     Map *map;
 
     int frameRate;

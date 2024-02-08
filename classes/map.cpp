@@ -4,6 +4,21 @@ Map::Map(int width, int height)
 {
     this->width = width;
     this->height = height;
+
+
+    for (int x = -1; x <= (int)this->getMapSize().x; x++)
+    {
+        this->borderBlocks.push_back(sf::Vector2i(x, -1));
+        this->borderBlocks.push_back(sf::Vector2i(x, this->getMapSize().y));
+
+        if (x == -1 || x == (int)this->getMapSize().x)
+        {
+            for (int y = -1; y <= (int)this->getMapSize().y; y++)
+            {
+                this->borderBlocks.push_back(sf::Vector2i(x, y));
+            }
+        }
+    }
 }
 
 std::vector<sf::Vector2i> Map::getFruits()
@@ -53,4 +68,9 @@ sf::Vector2u Map::getMapSize()
 std::vector<sf::Vector2i> Map::getBlocks()
 {
     return this->blocks;
+}
+
+std::vector<sf::Vector2i> Map::getBorderBlocks()
+{
+    return this->borderBlocks;
 }

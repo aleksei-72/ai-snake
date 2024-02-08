@@ -2,7 +2,19 @@
 #include <iostream>
 #include <cmath>
 
-AiStrategy::AiStrategy()
+AbstractStrategy *AiStrategy::clone()
+{
+    AiStrategy *a = new AiStrategy();
+    a->sensitivity = this->sensitivity;
+    a->mutate();
+    a->generation = this->generation + 1;
+
+    std::cout << "new AI generation: " << a->generation << '\n';
+
+    return static_cast<AbstractStrategy*>(a);
+}
+
+void AiStrategy::initSensivity()
 {
     for (int x = -this->viewRadius; x < this->viewRadius; x++)
     {
@@ -12,61 +24,50 @@ AiStrategy::AiStrategy()
             if (x == 0 && y == 0)
                 continue;
 
-            for (char type: {'s', 'w', 'f', 'c', 'n'})
+            for (char type: {'s', 'w', 'f', 'c'})
             {
                 float dist = sqrt(x*x + y*y);
+                float force = 0;
 
-                if (dist < 2 && (type == 's' || type == 'w' || type == 'c'))
+                if (dist < 3 && (type == 's' || type == 'w' || type == 'c'))
                 {
-                    float force = 50;
-
-                    if (type == 'c')
-                        force = 40;
-
-
-                    std::list<SnakeDirection> directions;
-
-                    if (x < 0)
-                        directions.push_back(SnakeDirection::LEFT);
-
-                    if (x > 0)
-                        directions.push_back(SnakeDirection::RIGHT);
-
-                    if (y < 0)
-                        directions.push_back(SnakeDirection::UP);
-
-                    if (y > 0)
-                        directions.push_back(SnakeDirection::DOWN);
-
-                    for (SnakeDirection dir: directions)
-                        this->sensitivity[type][x][y][dir] = -(force / dist);
+                    force = -190;
                 }
 
-                if ( dist < 10 && (type == 'f' || type == 'n'))
+                if ( dist < 8 && type == 'f')
                 {
-                    float force = 200;
-                    if (type == 'n')
-                        force = 2;
-
-                    std::list<SnakeDirection> directions;
-                    if (x < 0)
-                        directions.push_back(SnakeDirection::LEFT);
-
-                    if (x > 0)
-                        directions.push_back(SnakeDirection::RIGHT);
-
-                    if (y < 0)
-                        directions.push_back(SnakeDirection::UP);
-
-                    if (y > 0)
-                        directions.push_back(SnakeDirection::DOWN);
-
-                    for (SnakeDirection dir: directions)
-                        this->sensitivity[type][x][y][dir] = force / dist;
+                    force = 100;
                 }
+
+
+                if (x < 0)
+                {
+                    this->sensitivity[type][x][y][SnakeDirection::LEFT] = (force / (abs(x) * dist));
+                }
+
+                if (x > 0)
+                {
+                    this->sensitivity[type][x][y][SnakeDirection::RIGHT] = (force / (abs(x) * dist));
+                }
+
+                if (y < 0)
+                {
+                    this->sensitivity[type][x][y][SnakeDirection::UP] = (force / (abs(y) * dist));
+                }
+
+                if (y > 0)
+                {
+                    this->sensitivity[type][x][y][SnakeDirection::DOWN] = (force / (abs(y) * dist));
+                }
+
             }
         }
     }
+}
+
+AiStrategy::AiStrategy()
+{
+
 }
 
 void AiStrategy::mapSnake(sf::Vector2i position, std::list<sf::Vector2i> elements)
@@ -135,6 +136,7 @@ SnakeDirection AiStrategy::exec()
 
     for(auto item: result)
     {
+
         if (!maxDirections.size() || result[item.first] == result[maxDirections.front()])
         {
             maxDirections.push_back(item.first);
@@ -156,7 +158,34 @@ void AiStrategy::clearMap()
     {
         for (int y = -this->viewRadius; y < this->viewRadius; y++)
         {
-            this->view[x][y] = 'n';
+            this->view[x][y] = ' ';
+        }
+    }
+}
+
+void AiStrategy::mutate()
+{
+    float mutateProbability = 0.05;
+    float mutateForce = 10.f;
+
+    for (int x = -this->viewRadius; x < this->viewRadius; x++)
+    {
+        for (int y = -this->viewRadius; y < this->viewRadius; y++)
+        {
+
+            if (x == 0 && y == 0)
+                continue;
+
+            if ((float)(rand() % 100000) / 100000 > mutateProbability)
+                continue;
+
+            char c[5] = {'s', 'w', 'f', 'c'};
+
+            this->sensitivity[c[rand() % 5]][x][y][SnakeDirection::LEFT] += (float)(rand() % 30 - 15) / 15.f * mutateForce;
+            this->sensitivity[c[rand() % 5]][x][y][SnakeDirection::RIGHT] += (float)(rand() % 30 - 15) / 15.f * mutateForce;
+            this->sensitivity[c[rand() % 5]][x][y][SnakeDirection::UP] += (float)(rand() % 30 - 15) / 15.f * mutateForce;
+            this->sensitivity[c[rand() % 5]][x][y][SnakeDirection::DOWN] += (float)(rand() % 30 - 15) / 15.f * mutateForce;
+
         }
     }
 }

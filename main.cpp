@@ -13,16 +13,19 @@ int main()
     srand(time(0));
     Game game;
 
-    Map map(80, 60);
+    Map map(100, 75);
     map.generateRandom();
 
     game.setMap(&map);
 
     //ManualStrategy *manualStrategy = new ManualStrategy();
 
+
+    AiStrategy *aiStrategy = new AiStrategy();
+
     for (int i: {0, /*1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14*/})
     {
-        AiStrategy *aiStrategy = new AiStrategy();
+        aiStrategy->initSensivity();
         Snake snake1(aiStrategy);
         snake1.setPosition(sf::Vector2i(30 + i*5, 30));
         game.addSnake(snake1);
@@ -30,7 +33,7 @@ int main()
 
 
 
-    RenderManager render;
+    RenderManager render(sf::Vector2i(800, 600));
 
     unsigned int frameRate = 144;
     render.setFrameRate(&frameRate);

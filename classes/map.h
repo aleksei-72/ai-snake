@@ -14,14 +14,17 @@ public:
 
     sf::Vector2u getMapSize();
     std::vector<sf::Vector2i> getBlocks();
+
+    std::vector<sf::Vector2i> getBorderBlocks();
     std::vector<sf::Vector2i> getFruits();
 private:
     std::vector<sf::Vector2i> blocks;
+    std::vector<sf::Vector2i> borderBlocks;
     int width, height;
     std::vector<sf::Vector2i> fruits;
 
-    float filling = 0.005;
-    int fruitsCount = 900;
+    float filling = 0.01;
+    int fruitsCount = 350;
 };
 
 #endif
