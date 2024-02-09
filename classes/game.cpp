@@ -32,14 +32,6 @@ void Game::init()
 
 }
 
-void Game::execAi(int snakesNumber)
-{
-    while (!this->render->isTerminated())
-    {
-
-    }
-}
-
 void Game::run()
 {
     auto f = [this](int idx)
@@ -167,21 +159,22 @@ void Game::updateSnake(std::vector<Snake>::iterator snake)
 
 
                 if (
+                    snake->getId() == snakeIt->getId() &&
+                    snakeItElementIdx == snakeElementIdx
+                )
+                {
+                    continue;
+                }
+
+                if (
                     snakeItElementPos.x + snakeIt->getPosition().x  == snakeElementPos.x + snake->getPosition().x &&
                     snakeItElementPos.y + snakeIt->getPosition().y == snakeElementPos.y + snake->getPosition().y
                 ) {
-                    if (
-                        snake->getId() == snakeIt->getId() &&
-                        snakeItElementIdx == snakeElementIdx
-                    )
-                    {
-                        continue;
-                    }
 
                     if (snakeItElementIdx == 1)
-                        snake->kill();
-                    else if (snakeElementIdx == 1)
                         snakeIt->kill();
+                    else if (snakeElementIdx == 1)
+                        snake->kill();
 
                     continue;
                 }

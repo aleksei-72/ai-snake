@@ -20,7 +20,6 @@ public:
     void run();
 private:
 
-    void execAi(int snakesNumber);
     void exec(sf::Int64 t);
     void updateSnake(std::vector<Snake>::iterator snake);
     void draw();
