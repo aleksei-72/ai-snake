@@ -6,6 +6,7 @@
 #include <vector>
 #include <classes/render_manager.h>
 #include <classes/snake/strategies/ai_strategy.h>
+#include <thread>
 
 class Game
 {
@@ -19,6 +20,7 @@ public:
     void run();
 private:
 
+    void execAi(int snakesNumber);
     void exec(sf::Int64 t);
     void updateSnake(std::vector<Snake>::iterator snake);
     void draw();
@@ -30,7 +32,9 @@ private:
     int frameRate;
     RenderManager *render;
 
-    sf::Clock timer;
+    std::thread* aiThreads;
+
+    unsigned int aiThreadsCount = 1;
 };
 
 #endif

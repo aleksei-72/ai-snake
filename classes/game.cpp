@@ -32,16 +32,42 @@ void Game::init()
 
 }
 
+void Game::execAi(int snakesNumber)
+{
+    while (!this->render->isTerminated())
+    {
+
+    }
+}
+
 void Game::run()
 {
-    this->timer.restart();
+    auto f = [this](int idx)
+    {
+        sf::Clock timer;
+        timer.restart();
+
+        while(true)
+        {
+            this->exec(timer.getElapsedTime().asMicroseconds());
+            timer.restart();
+        }
+    };
+
+    std::thread threads[this->aiThreadsCount];
+
+    for (unsigned int i = 0; i < this->aiThreadsCount; i++){
+        threads[i] = std::thread(f, i);
+        threads[i].detach();
+    }
+
+    this->aiThreads = threads;
+
 
     while (!this->render->isTerminated()) {
-        this->exec(this->timer.getElapsedTime().asMicroseconds());
         this->render->startDraw();
         this->draw();
         this->render->endDraw();
-        this->timer.restart();
     }
 }
 
